@@ -1,0 +1,18 @@
+{
+  "mappings": {
+    "properties": {
+      "id": {
+        "type": "long"
+      },
+      "name": {
+        "type": "text"
+      },
+      "teacher": {
+        "type": "text"
+      },
+      "composite_score": {
+        "type": "double"
+      }
+    }
+  }
+}
