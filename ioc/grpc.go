@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-func InitGRPCxKratosServer(courseServer *grpc.SearchServiceServer, ecli *clientv3.Client, l logger.Logger) grpcx.Server {
+func InitGRPCxKratosServer(searchServer *grpc.SearchServiceServer, ecli *clientv3.Client, l logger.Logger) grpcx.Server {
 	type Config struct {
 		Name    string `yaml:"name"`
 		Weight  int    `yaml:"weight"`
@@ -28,7 +28,7 @@ func InitGRPCxKratosServer(courseServer *grpc.SearchServiceServer, ecli *clientv
 		kgrpc.Middleware(recovery.Recovery()),
 		kgrpc.Timeout(10*time.Second), // TODO
 	)
-	courseServer.Register(server)
+	searchServer.Register(server)
 	return &grpcx.KratosServer{
 		Server:     server,
 		Name:       cfg.Name,
