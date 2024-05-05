@@ -11,6 +11,10 @@ type courseRepository struct {
 	dao dao.CourseDAO
 }
 
+func (repo *courseRepository) DelCourse(ctx context.Context, courseId int64) error {
+	return repo.dao.DelCourse(ctx, courseId)
+}
+
 func NewCourseRepository(dao dao.CourseDAO) CourseRepository {
 	return &courseRepository{dao: dao}
 }

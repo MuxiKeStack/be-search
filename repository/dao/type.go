@@ -6,6 +6,7 @@ type CourseDAO interface {
 	InputCourse(ctx context.Context, course Course) error
 	InputCourseCompositeScore(ctx context.Context, courseId int64, score float64) error
 	Search(ctx context.Context, keywords []string, uid int64) ([]Course, error)
+	DelCourse(ctx context.Context, courseId int64) error
 }
 
 type HistoryDAO interface {

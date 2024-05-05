@@ -21,6 +21,14 @@ type CourseElasticDAO struct {
 	client *elastic.Client
 }
 
+func (dao *CourseElasticDAO) DelCourse(ctx context.Context, courseId int64) error {
+	_, err := dao.client.Delete().
+		Index(CourseIndexName).
+		Id(strconv.FormatInt(courseId, 10)).
+		Do(ctx)
+	return err
+}
+
 func NewCourseElasticDAO(client *elastic.Client) CourseDAO {
 	return &CourseElasticDAO{client: client}
 }

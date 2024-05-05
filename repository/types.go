@@ -11,6 +11,7 @@ type CourseRepository interface {
 	InputCourseCompositeScore(ctx context.Context, courseId int64, score float64) error
 	// Search uid使用来限制范围的,搜某个用户或者搜索全部
 	Search(ctx context.Context, keywords []string, uid int64) ([]domain.Course, error)
+	DelCourse(ctx context.Context, courseId int64) error
 }
 
 type HistoryRepository interface {

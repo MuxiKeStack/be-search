@@ -50,37 +50,58 @@ func (r *MySQLBinlogConsumer) Start() error {
 }
 
 func (r *MySQLBinlogConsumer) Consume(msg *sarama.ConsumerMessage, val canalx.Message[CourseBinlogData]) error {
-	table := val.Table
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	if table == "courses" {
-		for _, data := range val.Data {
-			id, err := strconv.ParseInt(data.Id, 10, 64)
-			if err != nil {
-				return err
+	const (
+		UPDATE = "UPDATE"
+		INSERT = "INSERT"
+		DELETE = "DELETE"
+	)
+	table := val.Table
+	switch val.Type {
+	case UPDATE, INSERT:
+		if table == "courses" {
+			for _, data := range val.Data {
+				id, err := strconv.ParseInt(data.Id, 10, 64)
+				if err != nil {
+					return err
+				}
+				err = r.svc.InputCourse(ctx, domain.Course{
+					Id:      id,
+					Name:    data.Name,
+					Teacher: data.Teacher,
+				})
+				if err != nil {
+					return err
+				}
 			}
-			err = r.svc.InputCourse(ctx, domain.Course{
-				Id:      id,
-				Name:    data.Name,
-				Teacher: data.Teacher,
-			})
-			if err != nil {
-				return err
+		} else if table == "composite_scores" {
+			for _, data := range val.Data {
+				courseId, err := strconv.ParseInt(data.CourseId, 10, 64)
+				if err != nil {
+					return err
+				}
+				score, err := strconv.ParseFloat(data.Score, 64)
+				if err != nil {
+					return err
+				}
+				err = r.svc.InputCourseCompositeScore(ctx, courseId, score)
+				if err != nil {
+					return err
+				}
 			}
 		}
-	} else if table == "composite_scores" {
-		for _, data := range val.Data {
-			courseId, err := strconv.ParseInt(data.CourseId, 10, 64)
-			if err != nil {
-				return err
-			}
-			score, err := strconv.ParseFloat(data.Score, 64)
-			if err != nil {
-				return err
-			}
-			err = r.svc.InputCourseCompositeScore(ctx, courseId, score)
-			if err != nil {
-				return err
+	case DELETE:
+		if table == "courses" {
+			for _, data := range val.Data {
+				courseId, err := strconv.ParseInt(data.Id, 10, 64)
+				if err != nil {
+					return err
+				}
+				err = r.svc.DelCourse(ctx, courseId)
+				if err != nil {
+					return err
+				}
 			}
 		}
 	}
