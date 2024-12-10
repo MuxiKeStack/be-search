@@ -58,7 +58,7 @@ func (dao *CourseElasticDAO) InputCourseCompositeScore(ctx context.Context, cour
 func (dao *CourseElasticDAO) Search(ctx context.Context, keywords []string, uid int64) ([]Course, error) {
 	queryString := strings.Join(keywords, " ")
 	query := elastic.NewBoolQuery().Should(
-		elastic.NewMatchQuery("name", queryString).Boost(2),
+		elastic.NewMatchQuery("name", queryString).Boost(1.2),
 		elastic.NewMatchQuery("teacher", queryString),
 	)
 	resp, err := dao.client.Search(CourseIndexName).Query(query).Do(ctx)
