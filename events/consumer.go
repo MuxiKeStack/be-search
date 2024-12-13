@@ -50,7 +50,7 @@ func (r *MySQLBinlogConsumer) Start() error {
 }
 
 func (r *MySQLBinlogConsumer) Consume(msg *sarama.ConsumerMessage, val canalx.Message[CourseBinlogData]) error {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 	const (
 		UPDATE = "UPDATE"
